@@ -1,0 +1,51 @@
+清理：mvn clean
+编译：mvn compile
+
+Maven3 (+Flex) 项目构建命令：
+
+mvn package -Dcontext=/xxx  如：mvn package -Dcontext=/m2
+或(混淆)
+mvn -file pom_obfuscator.xml package -Dcontext=/xxxxxxxxx
+
+100服务器  内网项目  编译打包时，请使用:
+mvn -file pom_obfuscator.xml package -Dcontext=
+ 注意 等号后面不要添加任何值或者斜杠 以免造成在线评标 数据无法加载问题
+
+无项目时：mvn package -Dcontext=
+
+rayhov-market Setup Steps:
+----------------------------------
+  1, Database schema and seed data:
+     1.1, Run db/schema-rayhov-market-initial-create.sql
+     1.2, Run db/seeddata-rayhov-market-initial.sql
+
+  2, Environment instance:
+     2.1, Create proper environment instance. You can copy from src/main/resources/dev. Then update db.properties for the database connection and env.properties for configuration. 
+     2.2, Set JVM argument
+          * Tomcat
+            - Set JVM argument "instance". For example, your new environment instance name is "production", you need to add "-Dinstance=production" in file catalina.bat.
+          * JBoss
+            - Set JVM argument "instance". For example, your new environment instance name is "production", you need to add "-Dinstance=production".
+            - Set JVM argument "-Dserver.type=jboss".
+
+  3, Deploy war file:
+     * Tomcat
+       - Directly deploy war file.
+     * JBoss
+       - Cop {mp.war}/WEB-INF/classes/log4j.xml to {jboss home}/server/{your instance}/conf.
+         - Rename log4j.xml to jboss-log4j.xml.
+	     - Change the path of log file. The default value is "../logs".
+       - Copy {mp.war}/WEB-INF/lib/commons-codec-{version}.jar to {jboss home}/server/{your instance}/lib.
+
+  4, Add MimeType
+     * Tomcat
+       - Add following mimeType in file {tomcat}/conf/web.xml
+	    <mime-mapping>
+		<extension>dd</extension>
+		<mime-type>application/vnd.oma.drm.message</mime-type>
+	    </mime-mapping>
+	    <mime-mapping>
+		<extension>dm</extension>
+		<mime-type>application/vnd.oma.drm.content</mime-type>
+	    </mime-mapping>
+
